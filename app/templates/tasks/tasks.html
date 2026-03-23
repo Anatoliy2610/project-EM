@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+        <div class="container">
+        <header class="d-flex justify-content-center py-3 ">
+          <ul class="nav nav-pills">
+            <li class="nav-item px-3"><a href="/register-form/">регистрация</a></li>
+            <li class="nav-item px-3"><a href="/login-form/">вход</a></li>
+            <li class="nav-item px-3"><a href="/logout/">выход</a></li>
+
+          </ul>
+        </header>
+      </div>
+
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>name</th>
+        <th>executor</th>
+        <th>status</th>
+        <th>dedline</th>
+        <th>description</th>
+        <th>job_evaluation</th>
+        <th>team</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for task in data_tasks %}
+        <tr>
+          <td>{{ task.id }}</td>
+          <td>{{ task.name }}</td>
+          <td>{{ task.executor.email }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.dedline }}</td>
+          <td>{{ task.description }}</td>
+          <td>{{ task.job_evaluation }}</td>
+          <td>{{ task.team.name }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+{% endblock %}

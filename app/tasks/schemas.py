@@ -1,0 +1,47 @@
+from pydantic import BaseModel
+
+from app.teams.schemas import TeamSchema
+from app.users.schemas import User
+from datetime import datetime
+
+class TaskSchema(BaseModel):
+    name: str
+    extcutor_id: int
+    executor_id: User = None
+    status: str = None
+    dedline: datetime
+    description: str = None
+    chat: str = None
+    team_id: int
+    team: TeamSchema = None
+
+
+class TaskAddUpdateSchema(BaseModel):
+    name: str = None
+    new_name: str = None
+    executor_id: int
+    status: str = None
+    dedline: str = None
+    description: str = None
+    chat: str = None
+
+
+class TaskDeleteSchema(BaseModel):
+    name: str
+    executor_id: int
+
+
+class EvaluationSchema(BaseModel):
+    name: str
+    job_evaluation: int
+
+
+class JobResultSchema(BaseModel):
+    name: str
+    executor: User 
+    status: str 
+    dedline: datetime
+    description: str
+    chat: str
+    job_evaluation: int 
+

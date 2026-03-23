@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+        <div class="container">
+        <header class="d-flex justify-content-center py-3 ">
+          <ul class="nav nav-pills">
+            <li class="nav-item px-3"><a href="/register-form/">регистрация</a></li>
+            <li class="nav-item px-3"><a href="/login-form/">вход</a></li>
+            <li class="nav-item px-3"><a href="/logout/">выход</a></li>
+
+          </ul>
+        </header>
+      </div>
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>email</th>
+        <th>role</th>
+        <th>team</th>
+        <th>password</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users_data %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>id{{ user.team_id }} {{ user.team.name }}</td>
+          <td>{{ user.hash_password }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Календарь</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .day-view, .month-view {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ваш Календарь</h1>
+
+    <form id="calendar-form">
+        <label for="date-input">Выберите дату:</label>
+        <input type="date" id="date-input" name="date-input">
+
+        <label for="end-date-input">Дата окончания (для месячного вида):</label>
+        <input type="date" id="end-date-input" name="end-date-input">
+
+        <!-- Исправлено: Убраны лишние кнопки, если они не реализованы -->
+        <!-- Добавлен вызов для кнопки "Показать" -->
+        <button type="button" onclick="fetchCalendarData(this.form)">Показать</button>
+        <!-- Если нужны отдельные кнопки, их нужно реализовать -->
+        <!-- <button type="button" onclick="showDayView()">Вид на день</button> -->
+        <!-- <button type="button" onclick="showMonthView()">Вид на месяц</button> -->
+    </form>
+
+    <div id="calendar-output">
+        <!-- Здесь будут отображаться данные календаря -->
+    </div>
+
+    <script>
+        function fetchCalendarData(form) { // Принимаем форму как аргумент
+            const accessToken = localStorage.getItem('accessToken');
+            if (!accessToken) {
+                console.error('accessToken не найден в localStorage!');
+                // Возможно, стоит перенаправить на страницу входа
+                alert('Пожалуйста, авторизуйтесь!');
+                window.location.href = '/login'; // Пример
+                return;
+            }
+
+            const dateInput = form.querySelector('#date-input');
+            const endDateInput = form.querySelector('#end-date-input'); // Если используется
+
+            let url = '/calendar';
+            let queryParams = [];
+
+            if (dateInput && dateInput.value) {
+                queryParams.push(`date=${encodeURIComponent(dateInput.value)}`);
+            }
+            // Добавьте логику для endDateInput, если нужно
+
+            if (queryParams.length > 0) {
+                url += '?' + queryParams.join('&');
+            }
+
+            console.log('Запрос к URL:', url); // Для отладки
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            // Добавляем заголовок
+            xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
+
+            xhr.onload = function() {
+                console.log('Статус ответа:', xhr.status); // Для отладки
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    console.log('Успешый ответ:', xhr.responseText);
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        displayCalendar(data); // Предполагаем, что эта функция существует
+                    } catch (e) {
+                        console.error("Ошибка парсинга JSON:", e);
+                        document.getElementById('calendar-output').innerHTML = 'Ошибка обработки данных.';
+                    }
+                } else {
+                    console.error(`Ошибка запроса: ${xhr.status} ${xhr.statusText}`);
+                    if (xhr.status === 401) {
+                        console.error('Ошибка авторизации (401). Токен недействителен или истек.');
+                        alert('Ваша сессия истекла. Пожалуйста, войдите снова.');
+                        localStorage.removeItem('accessToken'); // Очищаем недействительный токен
+                        window.location.href = '/login';       // Перенаправляем на вход
+                    } else {
+                         document.getElementById('calendar-output').innerHTML = `Ошибка загрузки календаря: ${xhr.statusText}`;
+                    }
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error('Произошла ошибка сети.');
+                document.getElementById('calendar-output').innerHTML = 'Ошибка сети. Попробуйте позже.';
+            };
+
+            xhr.send();
+        }
+
+        // Вызов при загрузке, если нужно автоматически получать данные
+        // document.addEventListener('DOMContentLoaded', () => fetchCalendarData(document.getElementById('calendar-form')));
+
+        // Заглушка для displayCalendar, если она не определена
+        function displayCalendar(data) {
+            const outputDiv = document.getElementById('calendar-output');
+            if (data) {
+                 outputDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`; // Просто выводим как JSON для примера
+            } else {
+                outputDiv.innerHTML = 'Нет данных для отображения.';
+            }
+        }
+
+        // Если у вас есть функции showDayView и showMonthView, убедитесь, что они также
+        // используют fetchCalendarData с правильными параметрами или работают с уже полученными данными.
+
+    </script>
+</body>
+</html>

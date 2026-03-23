@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+        <div class="container">
+        <header class="d-flex justify-content-center py-3 ">
+          <ul class="nav nav-pills">
+            <li class="nav-item px-3"><a href="/register-form/">регистрация</a></li>
+            <li class="nav-item px-3"><a href="/login-form/">вход</a></li>
+            <li class="nav-item px-3"><a href="/logout/">выход</a></li>
+
+          </ul>
+        </header>
+      </div>
+
+
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Название встречи</th>
+        <th>Время начала встречи</th>
+        <th>Время окончания</th>
+        <th>Команда</th>
+        <th>Участники встречи</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for meeting in meetings_data %}
+        <tr>
+            <td>{{ meeting.id }}</td>
+            <td>{{ meeting.name }}</td>
+            <td>{{ meeting.datetime_beginning }}</td>
+            <td>{{ meeting.datetime_end }}</td>
+            <td>{{ meeting.team.name }}</td>
+            <td>
+                {% for user in meeting.participants %}
+                   | {{ user.email }} |
+                {% endfor %}
+            </td>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+{% endblock %}
