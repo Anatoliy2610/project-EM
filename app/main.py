@@ -18,7 +18,6 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
-
 admin = Admin(app, engine)
 admin.add_view(UserAdmin)
 admin.add_view(TaskAdmin)
