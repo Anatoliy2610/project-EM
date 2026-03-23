@@ -5,6 +5,11 @@ class TeamSchema(BaseModel):
     name: str
 
 
-class UserTeam(BaseModel):
+class UserTeamSchema(BaseModel):
     email_user: str
     role: str = None
+
+
+class DeleteUserSChema(BaseModel):
+    email_user: str
+

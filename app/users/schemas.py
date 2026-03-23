@@ -7,7 +7,6 @@ from app.teams.schemas import TeamSchema
 class User(BaseModel):
     email: str
     role: str | None
-    role_team: str | None
     team_id: int  | None
     team: TeamSchema | None
     hash_password: str

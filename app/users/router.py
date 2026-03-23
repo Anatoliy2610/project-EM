@@ -85,10 +85,9 @@ async def auth_user(user_data: UserAuth, db: Session = Depends(get_db)):
     return {'access_token': access_token, 'refresh_token': None}
 
 
-
-@router.get("/me/")
-async def get_me(user_data: UserModel = Depends(get_current_user)):
-    return user_data
+# @router.get("/me/")
+# async def get_me(user_data: UserModel = Depends(get_current_user)):
+#     return user_data
 
 
 @router.post("/logout/")

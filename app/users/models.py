@@ -15,7 +15,6 @@ class UserModel(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True)
     role = Column(String, nullable=True)
-    role_team = Column(String, nullable=True)#  скорее всего убрать
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
     team = relationship('TeamModel')
 
