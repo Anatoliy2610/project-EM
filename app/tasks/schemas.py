@@ -1,8 +1,11 @@
+from typing import List
+
 from pydantic import BaseModel
 
 from app.teams.schemas import TeamSchema
 from app.users.schemas import User
 from datetime import datetime
+
 
 class TaskSchema(BaseModel):
     name: str
@@ -11,7 +14,7 @@ class TaskSchema(BaseModel):
     status: str = None
     dedline: datetime
     description: str = None
-    chat: str = None
+    chat: List[str]
     team_id: int
     team: TeamSchema = None
 
@@ -23,7 +26,6 @@ class TaskAddUpdateSchema(BaseModel):
     status: str = None
     dedline: str = None
     description: str = None
-    chat: str = None
 
 
 class TaskDeleteSchema(BaseModel):
@@ -45,3 +47,11 @@ class JobResultSchema(BaseModel):
     chat: str
     job_evaluation: int 
 
+
+class MessageAddSchema(BaseModel):
+    task_id: int
+    message: str
+
+
+class ChatSchema(BaseModel):
+    task_id: int

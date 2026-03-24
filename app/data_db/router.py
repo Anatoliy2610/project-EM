@@ -232,3 +232,74 @@ async def read_item(request: Request):
 
 
 
+
+@router.post('/check_data_chat')
+async def check_data_chat(db: Session = Depends(get_db)):
+
+    data_teams = [
+        {'name': 'name_team_1'},
+        {'name': 'name_team_2'},
+        {'name': 'name_team_3'},
+        {'name': 'name_team_4'},
+        {'name': 'name_team_5'},
+    ]
+    data_users = [
+        {'email': 'user1@mail.ru', 'role': 'админ команды', 'team_id': 1, 'password': 'user1@mail.ru'},
+        {'email': 'user2@mail.ru', 'role': 'менеджер', 'team_id': 1, 'password': 'user2@mail.ru'},
+        {'email': 'user3@mail.ru', 'role': 'сотрудник', 'team_id': 1, 'password': 'user3@mail.ru'},
+        {'email': 'user4@mail.ru', 'role': 'сотрудник', 'team_id': 1, 'password': 'user4@mail.ru'},
+        {'email': 'user5@mail.ru', 'role': 'сотрудник', 'team_id': 1, 'password': 'user5@mail.ru'},
+
+        {'email': 'user6@mail.ru', 'role': 'админ команды', 'team_id': 2, 'password': 'user6@mail.ru'},
+        {'email': 'user7@mail.ru', 'role': 'менеджер', 'team_id': 2, 'password': 'user7@mail.ru'},
+        {'email': 'user8@mail.ru', 'role': 'сотрудник', 'team_id': 2, 'password': 'user8@mail.ru'},
+        {'email': 'user9@mail.ru', 'role': 'сотрудник', 'team_id': 2, 'password': 'user9@mail.ru'},
+    ]
+    data_tasks = [
+        {'name': 'задача №1 для user2@mail.ru', 'executor_id': 2, 'dedline': datetime(2026, 3, 28), 'description': 'описание для задачи №1', 'team_id': 1},
+        {'name': 'задача №2 для user2@mail.ru', 'executor_id': 2, 'dedline': datetime(2026, 3, 29), 'description': 'описание для задачи №2', 'team_id': 1},
+        {'name': 'задача №3 для user2@mail.ru', 'executor_id': 2, 'dedline': datetime(2026, 3, 30), 'description': 'описание для задачи №3', 'team_id': 1},
+
+        {'name': 'задача №1 для user3@mail.ru', 'executor_id': 3, 'dedline': datetime(2026, 3, 28), 'description': 'описание для задачи №1', 'team_id': 1},
+        {'name': 'задача №2 для user3@mail.ru', 'executor_id': 3, 'dedline': datetime(2026, 3, 29), 'description': 'описание для задачи №2', 'team_id': 1},
+        {'name': 'задача №3 для user3@mail.ru', 'executor_id': 3, 'dedline': datetime(2026, 3, 30), 'description': 'описание для задачи №3', 'team_id': 1},
+
+        {'name': 'задача №1 для user4@mail.ru', 'executor_id': 4, 'dedline': datetime(2026, 3, 28), 'description': 'описание для задачи №1', 'team_id': 1},
+        {'name': 'задача №2 для user4@mail.ru', 'executor_id': 4, 'dedline': datetime(2026, 3, 29), 'description': 'описание для задачи №2', 'team_id': 1},
+        {'name': 'задача №3 для user4@mail.ru', 'executor_id': 4, 'dedline': datetime(2026, 3, 30), 'description': 'описание для задачи №3', 'team_id': 1},
+
+    ]
+
+    for item in data_teams:
+        db_teams = TeamModel(
+            name = item.get('name')
+        )
+        db.add(db_teams)
+        db.commit()
+        db.refresh(db_teams)
+    for item in data_users:
+        db_users = UserModel(
+            email = item.get('email'),
+            role = item.get('role'),
+            team_id = item.get('team_id'),
+            hash_password = get_password_hash(item.get('password')),
+        )
+        db.add(db_users)
+        db.commit()
+        db.refresh(db_users)
+    index = 0
+    for item in data_tasks:
+        index += 1
+        db_tasks = TaskModel(
+            name = item.get("name"),
+            executor_id = item.get('executor_id'),
+            dedline = item.get('dedline'),
+            description = item.get("description"),
+            team_id = item.get("team_id"),
+        )
+        db.add(db_tasks)
+        db.commit()
+        db.refresh(db_tasks)
+
+
+

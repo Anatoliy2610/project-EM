@@ -3,12 +3,12 @@ from typing import List
 from sqlalchemy.orm import Session, selectinload
 from datetime import datetime
 
-from app.tasks.models import TaskModel
-from app.tasks.schemas import EvaluationSchema, JobResultSchema, TaskAddUpdateSchema, TaskDeleteSchema, TaskSchema
+from app.tasks.models import MessageModel, TaskModel
+from app.tasks.schemas import ChatSchema, MessageAddSchema, EvaluationSchema, JobResultSchema, TaskAddUpdateSchema, TaskDeleteSchema, TaskSchema
 # from app.users.models import UserModel
 
 from app.config import get_current_user, get_db
-from app.tasks.utils import add_evaluation_db, check_absence_task, check_availability_task, check_executor, check_user_admin, task_add_db, task_delete_db, task_update_db
+from app.tasks.utils import add_evaluation_db, add_message_db, check_absence_task, check_availability_task, check_executor, check_user_admin, get_messages, task_add_db, task_delete_db, task_update_db
 from app.users.models import UserModel
 from app.config import templates
 
@@ -22,6 +22,7 @@ async def get_tasks(request: Request, db: Session = Depends(get_db)):
     data_tasks = db.query(TaskModel).options(
         selectinload(TaskModel.executor),
         selectinload(TaskModel.team),
+        selectinload(TaskModel.chat)
     ).all()
     return templates.TemplateResponse(
         request=request, name="tasks/tasks.html", context={"data_tasks": data_tasks}
@@ -37,8 +38,7 @@ async def add_task(data_task: TaskAddUpdateSchema, user_data: UserModel = Depend
     "executor_id": 0,
     "status": "string",
     "dedline": "string",
-    "description": "string",
-    "chat": "string"
+    "description": "string"
     }
     '''
     check_user_admin(user_data.role)
@@ -49,6 +49,27 @@ async def add_task(data_task: TaskAddUpdateSchema, user_data: UserModel = Depend
     task_add_db(data_task=data_task, executor=executor, db=db)
     return {'message': f'Задача зарегистрирована для {executor.email}'}
 
+
+
+@router.post("/add_message")
+async def add_message_chat(data_chat: MessageAddSchema, user_data: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):
+    task = db.query(TaskModel).filter(TaskModel.id == data_chat.task_id, TaskModel.team_id == user_data.team_id).first()
+    check_absence_task(task=task)
+    add_message_db(data_chat=data_chat, user_data=user_data, task=task, db=db)
+    return {'message': f'Добавлено сообщение в чат к задаче {task.name}'}
+
+
+@router.get("/get_chat")
+async def get_chat(data_chat: ChatSchema, user_data: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):
+    if user_data.role == 'админ команды':
+        task = db.query(TaskModel).filter(TaskModel.id == data_chat.task_id, TaskModel.team_id == user_data.team_id).first()
+    else:
+        task = db.query(TaskModel).filter(TaskModel.id == data_chat.task_id, TaskModel.executor_id == user_data.id).first()
+    chat = get_messages(task)
+    if chat:
+        return {'message': f'Чат для Админа по задаче {task.name} - {chat}'}
+    return {'message': 'Сообщений по данной задаче нет'}
+    
 
 @router.patch('/update_task')
 async def update_task(data_task: TaskAddUpdateSchema, user_data: UserModel = Depends(get_current_user), db: Session = Depends(get_db)):

@@ -17,10 +17,5 @@ class UserModel(Base):
     role = Column(String, nullable=True)
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=True)
     team = relationship('TeamModel')
-
     hash_password = Column(String)
-
     meetings = relationship('MeetingModel', secondary=meeting_participants, back_populates='participants')
-
-
-

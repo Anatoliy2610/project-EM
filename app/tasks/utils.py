@@ -2,7 +2,7 @@ from datetime import datetime
 
 from fastapi import HTTPException, status
 
-from app.tasks.models import TaskModel
+from app.tasks.models import MessageModel, TaskModel
 
 
 def check_user_admin(user_role):
@@ -54,7 +54,6 @@ def task_add_db(data_task, executor, db):
             int(data_task.dedline.split('-')[2]),
         ),
         description = data_task.description,
-        chat = data_task.chat,
         team_id = executor.team_id
         )
     db.add(db_task)
@@ -100,3 +99,26 @@ def add_evaluation_db(job_evaluation, task, db):
         task.job_evaluation = job_evaluation
         task.status = 'в работе'
     db.commit()
+
+
+def add_message_db(data_chat, user_data, task, db):
+    db_message = MessageModel(
+        message = data_chat.message,
+        sender_id = user_data.id,
+        task_id = data_chat.task_id,
+    )
+    db_message.task = [task]
+    db.add(db_message)
+    db.commit()
+    db.refresh(db_message)
+
+
+def get_messages(task):
+    result = ''
+    if task:
+        chat = task.chat
+        for message in chat:
+            if message:
+                result += f"Сообщение '{message.message}' от пользователя с 'id {message.sender_id}' дата '{message.created_at}' | "
+    return result
+
