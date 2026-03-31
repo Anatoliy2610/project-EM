@@ -1,0 +1,9 @@
+/venv/
+/__pycache__/
+DB.db
+/.vscode/
+/new_app/
+/app_magazine/
+.env
+.coverage
+

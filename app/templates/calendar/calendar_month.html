@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+
+
+<table class="table table-striped">
+    {% for week in calendar_now %}
+    <thead>
+      <tr>
+        {% for day in week %}
+            {% if day == 0 %}
+                <th></th>
+            {% else %}
+            {% for key in day %}
+                <th>{{ key }}</th>
+            {% endfor %}
+            {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for day in week %}
+                {% if day == 0 %}
+                    <td></td>
+                {% else %}
+                    {% for key in day  %}
+                        {% if day[key] %}
+                            {% for value in day[key] %}
+                                <td>{{ value }}</td>
+                                <br>
+                            {% endfor %}
+                        
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </tr>
+    </tbody>
+    {% endfor %}
+  </table>
+
+{% endblock %}

@@ -9,3 +9,8 @@ freeze:
 
 test:
 	pytest -v -s
+
+linter:
+	ruff check app
+
+	

@@ -1,17 +1,17 @@
-from pydantic import BaseModel
-
+from datetime import datetime
 from typing import List
+
+from pydantic import BaseModel
 
 from app.teams.schemas import TeamSchema
 from app.users.schemas import User
-from datetime import datetime
 
 
 class MeetingSchema(BaseModel):
     name: str
     datetime_beginning: datetime
     datetime_end: datetime
-    team_id: int | None#None временно
+    team_id: int | None  # None временно
     team: TeamSchema
     participants: List[User]
 
@@ -23,14 +23,13 @@ class MeetinAddSchema(BaseModel):
 
 
 class MeetingSchemaDelete(BaseModel):
-    name: str
-    datetime_beginning: datetime
+    id: int
 
 
 class MeetingsUserSchema(BaseModel):
     name: str
     datetime_beginning: datetime
     datetime_end: datetime
-    team_id: int | None#None временно
+    team_id: int
     team: TeamSchema
     participants: List[User]

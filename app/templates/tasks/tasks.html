@@ -3,18 +3,13 @@
 
 {% block content %}
 
-        <div class="container">
-        <header class="d-flex justify-content-center py-3 ">
-          <ul class="nav nav-pills">
-            <li class="nav-item px-3"><a href="/register-form/">регистрация</a></li>
-            <li class="nav-item px-3"><a href="/login-form/">вход</a></li>
-            <li class="nav-item px-3"><a href="/logout/">выход</a></li>
 
-          </ul>
-        </header>
-      </div>
-
-
+<div class="container mt-4">
+{% if current_user.role == 'админ команды' %}
+  <a href='/add_task' class='btn btn-primary mb-3'>Создать задачу</a>
+{% endif %}
+<br>
+<a href='/tasks_user' class='btn btn-primary mb-3'>Просмотр своих задач</a>
 <table class="table table-striped">
     <thead>
       <tr>
@@ -33,20 +28,96 @@
       {% for task in data_tasks %}
         <tr>
           <td>{{ task.id }}</td>
+          {% if current_user.role == 'админ команды' %}
+          <td>{{ task.name }}<br><a href='{{ url_for('get_task_user', task_id=task.id) }}' class='btn btn-primary mb-3'>Посмотреть задачу</a></td>
+          {% else %}
+            {% if current_user.email == task.executor.email %}
+            <td>{{ task.name }}<br><a href="{{ url_for('get_task_user', task_id=task.id) }}" class='btn btn-primary mb-3'>Посмотреть  задачу</a></td>
+            {% endif %}
           <td>{{ task.name }}</td>
+          {% endif %}
           <td>{{ task.executor.email }}</td>
           <td>{{ task.status }}</td>
           <td>{{ task.dedline }}</td>
-          <td>{{ task.description }}</td>
+          <td>
+            {{ task.description }}
+            <br>
+                <a href="{{ url_for('get_job_evaluation', task_id=task.id) }}" class='btn btn-primary mb-3'>Оценить задачу</a>
+          </td>
           <td>{{ task.job_evaluation }}</td>
           <td>{{ task.team.name }}</td>
+          <td>
+            {% if current_user.role == 'админ команды' %}
+                <div class="delete-task-container">
+                  <button class="delete-task-btn" data-task-id="{{ task.id }}" data-executor-id="{{ task.executor_id }}">Удалить задачу</button>
+                </div>
+              <br>
+              <a href="{{ url_for('get_update_task', task_id=task.id) }}">Изменить задачу</a>
+            {% endif %}
+          </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 
+<div id="messageArea" style="display: none; color: green; margin-top: 10px;"></div>
+<div id="errorMessage" style="display: none; color: red; margin-top: 10px;"></div>
+</div>
+<script>
 
+    const deleteButtons = document.querySelectorAll('.delete-task-btn');
 
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const idTaskToDelete = this.getAttribute('data-task-id');
+            const idExecutorToDelete = this.getAttribute('data-executor-id');
+            if (!idTaskToDelete) {
+                console.error('ID задачи не найден в data-атрибуте.');
+                return;
+            }
+            if (!idExecutorToDelete) {
+                console.error('Id исполнителя не найден в data-атрибуте.');
+                return;
+            }
+            const messageArea = document.getElementById('messageArea');
+            const errorMessage = document.getElementById('errorMessage');
+            messageArea.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            try {
+                const response = await fetch('/delete_task', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                      id: idTaskToDelete,
+                      executor_id: idExecutorToDelete
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageArea.textContent = result.message;
+                    messageArea.style.display = 'block';
+                } else {
+                    if (result && result.detail) {
+                        errorMessage.textContent = `Ошибка: ${result.detail}`;
+                    } else {
+                        errorMessage.textContent = `Ошибка сервера (${response.status}): ${response.statusText}`;
+                    }
+                    errorMessage.style.display = 'block';
+                }
+            } catch (error) {
+  
+                console.error('Network or JSON parsing error:', error);
+                errorMessage.textContent = 'Ошибка сети или сервера. Попробуйте позже.';
+                errorMessage.style.display = 'block';
+            }
+        });
+    });
+</script>
 
 
 {% endblock %}

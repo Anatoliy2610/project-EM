@@ -6,7 +6,6 @@ from app.teams.models import TeamModel
 from app.users.models import UserModel
 
 
-
 class UserAdmin(ModelView, model=UserModel):
     column_list = [
         UserModel.id,
@@ -15,20 +14,18 @@ class UserAdmin(ModelView, model=UserModel):
         UserModel.team_id,
         UserModel.team,
         UserModel.hash_password,
-        UserModel.meetings
-        ]
+        UserModel.meetings,
+    ]
 
 
 class TeamAdmin(ModelView, model=TeamModel):
     column_list = [TeamModel.id, TeamModel.name]
 
 
-
 class TaskAdmin(ModelView, model=TaskModel):
     column_list = [
         TaskModel.id,
         TaskModel.name,
-
         TaskModel.executor_id,
         TaskModel.executor,
         TaskModel.status,
@@ -37,7 +34,7 @@ class TaskAdmin(ModelView, model=TaskModel):
         TaskModel.job_evaluation,
         TaskModel.team_id,
         TaskModel.team,
-        ]
+    ]
 
 
 class MeetingAdmin(ModelView, model=MeetingModel):
@@ -48,6 +45,5 @@ class MeetingAdmin(ModelView, model=MeetingModel):
         MeetingModel.datetime_end,
         MeetingModel.team_id,
         MeetingModel.team,
-        MeetingModel.participants
-        ]
-
+        MeetingModel.participants,
+    ]

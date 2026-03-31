@@ -1,27 +1,31 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8" />
-<title>Форма входа</title>
-<style>
-  .error { color: red; }
-</style>
-</head>
-<body>
-  <h2>Вход</h2>
-  <form id="loginForm">
-    <label for="email">Email:</label><br />
-    <input type="email" id="email" name="email" required /><br />
-    <span id="emailError" class="error"></span><br />
+{% extends 'base.html' %}
 
-    <label for="password">Пароль:</label><br />
-    <input type="password" id="password" name="password" required minlength="6" /><br />
-    <span id="passwordError" class="error"></span><br />
 
-    <button type="submit">Войти</button>
-  </form>
+{% block content %}
 
-  <script>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h1 class="text-center mb-4">Вход в систему</h1>
+            <form id="loginForm" class="p-4 border rounded shadow-sm">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Пароль</label>
+                    <input type="password" class="form-control" id="loginPassword" name="password" required>
+                </div>
+                <div id="loginErrorMessage" class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Войти</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
     const form = document.getElementById('loginForm');
     const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
@@ -109,7 +113,7 @@ loginForm.addEventListener('submit', async (event) => {
         // localStorage.setItem('refreshToken', tokens.refresh_token); // Если вы будете использовать refresh token
 
         alert('Вход выполнен успешно!');
-        window.location.href = '/calendar'; // Перенаправляем на страницу календаря
+        window.location.href = '/'; // Перенаправляем на страницу календаря
 
     } catch (error) {
         console.error('Ошибка при входе:', error);
@@ -120,5 +124,5 @@ loginForm.addEventListener('submit', async (event) => {
 
   </script>
 
-</body>
-</html>
+
+{% endblock %}

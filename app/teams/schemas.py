@@ -12,4 +12,3 @@ class UserTeamSchema(BaseModel):
 
 class DeleteUserSChema(BaseModel):
     email_user: str
-
