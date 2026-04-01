@@ -22,7 +22,7 @@ async def get_meetings(
     db: Session = Depends(get_db),
 ):
     meetings_data = (
-        db.query(MeetingModel).options(selectinload(MeetingModel.participants)).all()
+        db.query(MeetingModel).filter(MeetingModel.team_id == user_data.team_id).options(selectinload(MeetingModel.participants)).all()
     )
     return templates.TemplateResponse(
         request=request,

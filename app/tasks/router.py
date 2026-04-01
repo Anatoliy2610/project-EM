@@ -26,7 +26,7 @@ async def get_tasks(
     db: Session = Depends(get_db),
 ):
     data_tasks = (
-        db.query(TaskModel)
+        db.query(TaskModel).filter(TaskModel.team_id == user_data.team_id)
         .options(
             selectinload(TaskModel.executor),
             selectinload(TaskModel.team),
